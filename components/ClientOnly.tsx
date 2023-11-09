@@ -6,7 +6,7 @@ const ClientOnly = ({ children }: { children: React.ReactNode }) => {
 	const [hasMounted, setHasMounted] = useState<boolean>(false)
 
 	useEffect(() => {
-		setHasMounted(!true)
+		setHasMounted(true)
 	}, [])
 
 	if (!hasMounted) {
