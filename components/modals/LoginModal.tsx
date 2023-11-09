@@ -1,6 +1,8 @@
 'use client'
 
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
+
+import { signIn } from 'next-auth/react'
 
 import axios from 'axios'
 
@@ -11,16 +13,18 @@ import { FcGoogle } from 'react-icons/fc'
 
 import { useForm, SubmitHandler, FieldValues } from 'react-hook-form'
 
-import useRegisterModal from '@/hooks/useRegisterModal';
 import useLoginModal from '@/hooks/useLoginModal'
 import { toast } from 'react-hot-toast'
 
 import Modal from './Modal'
 import TextInput from '../inputs/TextInput'
-import Button from '../Button';
+import Button from '../Button'
+
+import { useRouter } from 'next/navigation'
+
 const LoginModal = () => {
-	const registerModal = useRegisterModal()
-	const loginModal = useLoginModal();
+	const loginModal = useLoginModal()
+	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
 
 	/* Form control  */
@@ -30,7 +34,6 @@ const LoginModal = () => {
 		formState: { errors },
 	} = useForm<FieldValues>({
 		defaultValues: {
-			name: '',
 			email: '',
 			password: '',
 		},
@@ -39,35 +42,33 @@ const LoginModal = () => {
 	const onSubmit: SubmitHandler<FieldValues> = (data) => {
 		setIsLoading(true)
 
-		axios.post('/api/register', data)
-			.then(() => {
-				registerModal.onClose()
-			})
-			.catch((_error) => {
-				toast.error('Somethings went wrong !')
-			})
-			.finally(() => {
-				setIsLoading(false)
-			})
+		signIn('credentials', {
+			...data,
+			redirect: false,
+		}).then((callback) => {
+			setIsLoading(false)
+
+			if (callback?.ok) {
+				toast.success('Logged In')
+				router.refresh()
+				loginModal.onClose()
+			}
+
+			if (callback?.error) {
+				toast.error(callback.error)
+			}
+		})
 	}
 
 	const modalBodyContent = (
 		<div className="flex flex-col gap-4">
 			<Heading
-				title="Welcome to Airbnb"
-				subTitle="Create an account"
+				title="Welcome back"
+				subTitle="Login to your account"
 			/>
 			<TextInput
 				id="email"
 				label="Email"
-				disabled={isLoading}
-				register={register}
-				errors={errors}
-				required
-			/>
-			<TextInput
-				id="name"
-				label="Name"
 				disabled={isLoading}
 				register={register}
 				errors={errors}
@@ -100,18 +101,6 @@ const LoginModal = () => {
 				icon={AiFillGithub}
 				onClick={() => {}}
 			/>
-			<div className="text-neutral-500 text-center mt-4 font-medium">
-				<div className="flex flex-row gap-4 items-center justify-center">
-					<div className="font-bold">
-						Already have an account ?
-					</div>
-					<div
-						className="hover:underline font-semibold text-black cursor-pointer"
-						onClick={registerModal.onClose}>
-						Log In
-					</div>
-				</div>
-			</div>
 		</div>
 	)
 
@@ -119,7 +108,7 @@ const LoginModal = () => {
 		<Modal
 			disabled={isLoading}
 			isOpen={loginModal.isOpen}
-			title="Register"
+			title="Login"
 			actionLabel="Continue"
 			onClose={loginModal.onClose}
 			onSubmit={handleSubmit(onSubmit)}
