@@ -4,8 +4,6 @@ import React, { useState } from 'react'
 
 import { signIn } from 'next-auth/react'
 
-import axios from 'axios'
-
 import Heading from '../Heading'
 
 import { AiFillGithub } from 'react-icons/ai'
@@ -43,21 +41,23 @@ const LoginModal = () => {
 		setIsLoading(true)
 
 		signIn('credentials', {
-			...data,
-			redirect: false,
+			email: data?.email, 
+			password: data?.password,
 		}).then((callback) => {
 			setIsLoading(false)
 
 			if (callback?.ok) {
 				toast.success('Logged In')
-				router.refresh()
 				loginModal.onClose()
 			}
 
 			if (callback?.error) {
+				console.log(callback);
 				toast.error(callback.error)
 			}
 		})
+
+		console.log(data)
 	}
 
 	const modalBodyContent = (
@@ -73,6 +73,7 @@ const LoginModal = () => {
 				register={register}
 				errors={errors}
 				required
+				type='text'
 			/>
 			<TextInput
 				id="password"

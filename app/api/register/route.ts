@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 
 import prisma from '@/app/libs/prismadb'
 
+/* Register POST Api handlers */
 export async function POST(request: Request) {
 	const body = await request.json()
 
