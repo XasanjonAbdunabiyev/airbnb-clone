@@ -8,6 +8,7 @@ import RegisterModal from '@/components/modals/RegisterModal'
 import LoginModal from '@/components/modals/LoginModal'
 
 import ToasterProvider from './providers/ToastProvider'
+import getCurrentUser from './actions/getCurrentUser'
 
 export const metadata: Metadata = {
 	title: 'AirBnb',
@@ -22,11 +23,12 @@ const font = Open_Sans({
 	weight: ['500'],
 })
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: {
 	children: React.ReactNode
 }) {
+	const currentUser = await getCurrentUser()
 	return (
 		<html lang="en">
 			<body className={font.className}>
@@ -34,7 +36,7 @@ export default function RootLayout({
 					<ToasterProvider />
 					<LoginModal />
 					<RegisterModal />
-					<Navbar />
+					<Navbar currentUser={currentUser} />
 				</ClientOnly>
 				{children}
 			</body>

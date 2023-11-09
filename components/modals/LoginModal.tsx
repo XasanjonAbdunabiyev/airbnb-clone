@@ -18,11 +18,8 @@ import Modal from './Modal'
 import TextInput from '../inputs/TextInput'
 import Button from '../Button'
 
-import { useRouter } from 'next/navigation'
-
 const LoginModal = () => {
 	const loginModal = useLoginModal()
-	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
 
 	/* Form control  */
@@ -41,8 +38,8 @@ const LoginModal = () => {
 		setIsLoading(true)
 
 		signIn('credentials', {
-			email: data?.email, 
-			password: data?.password,
+			...data,
+			redirect: false
 		}).then((callback) => {
 			setIsLoading(false)
 
@@ -53,11 +50,8 @@ const LoginModal = () => {
 
 			if (callback?.error) {
 				console.log(callback);
-				toast.error(callback.error)
 			}
 		})
-
-		console.log(data)
 	}
 
 	const modalBodyContent = (
