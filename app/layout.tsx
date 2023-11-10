@@ -9,7 +9,7 @@ import LoginModal from '@/components/modals/LoginModal'
 
 import ToasterProvider from './providers/ToastProvider'
 import getCurrentUser from './actions/getCurrentUser'
-
+import SessionProvider from './providers/SessionProvider'
 export const metadata: Metadata = {
 	title: 'AirBnb',
 	description: 'AirBnb clone',
@@ -23,21 +23,25 @@ const font = Open_Sans({
 	weight: ['500'],
 })
 
-export default async function RootLayout({
+export default  function RootLayout({
 	children,
+	params: { session, ...params },
 }: {
 	children: React.ReactNode
+	params: { session: any }
 }) {
 	return (
 		<html lang="en">
 			<body className={font.className}>
-				<ClientOnly>
-					<ToasterProvider />
-					<LoginModal />
-					<RegisterModal />
-					<Navbar />
-				</ClientOnly>
-				{children}
+				<SessionProvider session={session}>
+					<ClientOnly>
+						<ToasterProvider />
+						<LoginModal />
+						<RegisterModal />
+						<Navbar />
+					</ClientOnly>
+					{children}
+				</SessionProvider>
 			</body>
 		</html>
 	)

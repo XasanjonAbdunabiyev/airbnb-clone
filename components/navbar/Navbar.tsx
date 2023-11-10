@@ -1,13 +1,15 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import Container from '../Container'
 import Logo from './Logo'
 import Search from './Search'
 import UserMenu from './UserMenu'
 
-const Navbar: React.FC = () => {
+
+
+const Navbar: React.FC= () => {
 	return (
 		<nav className="shadow-sm fixed w-full bg-white z-10">
 			<div className="py-4 border-b-[1px]">
